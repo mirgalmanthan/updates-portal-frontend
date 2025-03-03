@@ -1,4 +1,24 @@
-# React + TypeScript + Vite
+# Updates Portal Frontend
+
+A frontend application for the Updates Portal built with React, TypeScript, and Vite.
+
+## About
+
+This project provides a flexible sign-in component that supports both user and admin logins, with customizable labels and dynamic navigation through the application.
+
+## Technology Stack
+
+- React
+- TypeScript
+- Vite
+
+## Features
+
+- User and Admin login interfaces
+- Dynamic navbar with context-aware navigation
+- Customizable UI components
+
+## Development Setup
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -47,4 +67,3 @@ export default tseslint.config({
     ...react.configs['jsx-runtime'].rules,
   },
 })
-```
