@@ -1,0 +1,89 @@
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.signin-form-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.signin-form-container h2 {
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 28px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #555;
+  font-size: 18px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  border-color: blueviolet;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+}
+
+.signin-button {
+  width: 100%;
+  background-color: blueviolet;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 15px;
+}
+
+.signin-button:hover {
+  background-color: #7a1fa0;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 25px;
+  color: #666;
+  font-size: 16px;
+}
+
+.register-link a {
+  color: blueviolet;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
