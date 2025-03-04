@@ -71,6 +71,11 @@
   background-color: #7a1fa0;
 }
 
+.signin-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
 .register-link {
   text-align: center;
   margin-top: 25px;
@@ -86,4 +91,25 @@
 
 .register-link a:hover {
   text-decoration: underline;
+}
+
+/* Message styles */
+.message {
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.message.success {
+  background-color: #e6f7e6;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.message.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
 }

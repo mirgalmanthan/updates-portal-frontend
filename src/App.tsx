@@ -1,18 +1,14 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import Navbar from './components/Navbar'
 import SignIn from './components/SignIn'
+import Register from './components/Register'
+import { AuthProvider } from './context/AuthContext'
 
 function App() {
   const [loginType, setLoginType] = useState<'user' | 'admin'>('user');
   
-  const handleSignIn = (identifier: string, password: string) => {
-    console.log(`${loginType} login attempt with:`, { identifier, password });
-    // Here you would typically handle authentication, e.g., API call to your backend
-  };
-
   const toggleLoginType = () => {
     setLoginType(loginType === 'user' ? 'admin' : 'user');
   };
@@ -26,32 +22,41 @@ function App() {
   ];
 
   return (
-    <>
-      <div>
-        <Navbar title='Updates Portal' tabs={navbarTabs}></Navbar>
-        
-        {loginType === 'user' ? (
-          <SignIn 
-            title="User Login"
-            onSubmit={handleSignIn}
-            identifierLabel="Email"
-            identifierType="email"
-            identifierPlaceholder="Enter your email"
-            loginButtonText="Sign In"
-            registerText="Create an account"
-          />
-        ) : (
-          <SignIn 
-            title="Admin Login"
-            onSubmit={handleSignIn}
-            identifierLabel="Username"
-            identifierType="text"
-            identifierPlaceholder="Enter your username"
-            loginButtonText="Admin Login"
-          />
-        )}
-      </div>
-    </>
+    <AuthProvider>
+      <Router>
+        <div>
+          <Navbar title='Updates Portal' tabs={navbarTabs}></Navbar>
+          
+          <Routes>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route path="/" element={
+              loginType === 'user' ? (
+                <SignIn 
+                  title="User Login"
+                  identifierLabel="Email"
+                  identifierType="email"
+                  identifierPlaceholder="Enter your email"
+                  loginButtonText="Sign In"
+                  registerText="Create an account"
+                  registerLink="/register"
+                  isAdminLogin={false}
+                />
+              ) : (
+                <SignIn 
+                  title="Admin Login"
+                  identifierLabel="Username"
+                  identifierType="text"
+                  identifierPlaceholder="Enter your username"
+                  loginButtonText="Admin Login"
+                  isAdminLogin={true}
+                />
+              )
+            } />
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
   )
 }
 
