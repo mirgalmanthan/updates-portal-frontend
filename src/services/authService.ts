@@ -78,22 +78,38 @@ const authService = {
   userLogin: async (credentials: EmailLoginCredentials): Promise<ApiResponse<AuthResponse>> => {
     try {
       const response = await apiClient.post('/user/login', credentials);
-      console.log("response: ",response)
+      console.log("Response from login:", response.data);
+      
       // Store token in localStorage if login successful
-      if (response.data && response.data.token) {
-        localStorage.setItem('auth_token', response.data.token);
-        // localStorage.setItem('user_role', 'user');
+      // The backend returns { error: false, success: true, payload: { accessToken } }
+      if (response.data && response.data.payload && response.data.payload.accessToken) {
+        const token = response.data.payload.accessToken;
+        console.log("Setting auth_token:", token);
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('user_role', 'user');
+        
+        // You can also store user data if available
         // localStorage.setItem('user_data', JSON.stringify(response.data.user));
+      } else {
+        console.error("Token not found in response:", response.data);
       }
       
       return {
         success: true,
-        data: response.data
+        data: {
+          token: response.data.payload?.accessToken || '',
+          user: {
+            id: '',
+            email: credentials.email,
+            role: 'user'
+          }
+        }
       };
     } catch (error: any) {
+      console.error("Login error:", error);
       return {
         success: false,
-        error: error.response?.data?.message || 'Login failed. Please check your credentials.'
+        error: error.response?.data?.payload?.message || 'Login failed. Please check your credentials.'
       };
     }
   },
@@ -130,6 +146,11 @@ const authService = {
   // Get user role
   getUserRole: (): string | null => {
     return localStorage.getItem('user_role');
+  },
+  
+  // Get authentication token
+  getToken: (): string | null => {
+    return localStorage.getItem('auth_token');
   },
   
   // Get current user
