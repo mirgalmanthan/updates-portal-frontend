@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -11,6 +11,7 @@ const HomePage: React.FC = () => {
   const [editorJson, setEditorJson] = useState<object>({});
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const quillRef = useRef<any>(null);
   
   const getCurrentTime = () => {
     const now = new Date();
@@ -94,9 +95,21 @@ const HomePage: React.FC = () => {
     setSaveMessage(null);
     
     try {
-      console.log('Saving JSON content:', editorJson);
-      // Pass the JSON representation of the content
-      const response = await saveUpdate({ content: editorJson });
+      // Get the Quill editor instance
+      const quillEditor = quillRef.current.getEditor();
+      
+      // Get the contents as a Delta object
+      const delta = quillEditor.getContents();
+      
+      // Format the delta in the required structure
+      const formattedDelta = {
+        ops: delta.ops
+      };
+      
+      console.log('Final Quill Delta:', formattedDelta);
+      
+      // Pass the formatted delta to saveUpdate
+      const response = await saveUpdate({ content: formattedDelta });
       
       if (response.success) {
         setSaveMessage({
@@ -152,6 +165,7 @@ const HomePage: React.FC = () => {
           
           <div className="quill-editor">
             <ReactQuill 
+              ref={quillRef}
               theme="snow"
               value={editorContent}
               onChange={handleEditorChange}

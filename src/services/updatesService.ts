@@ -21,9 +21,26 @@ interface ApiResponse<T> {
   error?: string;
 }
 
+// Define the Quill Delta operation interface
+interface DeltaOp {
+  insert: string;
+  attributes?: {
+    bold?: boolean;
+    italic?: boolean;
+    underline?: boolean;
+    list?: string;
+    [key: string]: any;
+  };
+}
+
+// Define the Quill Delta interface
+interface QuillDelta {
+  ops: DeltaOp[];
+}
+
 // Define the update content interface
 interface UpdateContent {
-  content: object; 
+  content: QuillDelta | object;
   [key: string]: any;
 }
 
@@ -47,8 +64,10 @@ export const saveUpdate = async (content: UpdateContent): Promise<ApiResponse<Up
     // Prepare the request payload with the Quill delta object
     const updateData = {
       date_of_update: date_of_update,
-      updates: content.content  
+      updates: content.content  // This is the Quill delta object
     };
+    
+    console.log('Sending update data:', updateData);
     
     // Make the API call using the correct endpoint
     // The apiClient will automatically add the Authorization header with the token
