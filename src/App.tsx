@@ -1,10 +1,24 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import './App.css'
 import Navbar from './components/Navbar'
 import SignIn from './components/SignIn'
 import Register from './components/Register'
-import { AuthProvider } from './context/AuthContext'
+import HomePage from './pages/HomePage'
+import { AuthProvider, useAuth } from './context/AuthContext'
+
+// Protected route component
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    // Redirect to login page if not authenticated
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
+
+  return children;
+};
 
 function App() {
   const [loginType, setLoginType] = useState<'user' | 'admin'>('user');
@@ -29,6 +43,11 @@ function App() {
           
           <Routes>
             <Route path="/register" element={<Register />} />
+            <Route path="/home" element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            } />
             <Route path="/login" element={<Navigate to="/" replace />} />
             <Route path="/" element={
               loginType === 'user' ? (

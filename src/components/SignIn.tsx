@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/signin.css";
 import { useAuth } from "../context/AuthContext";
 
@@ -35,6 +36,7 @@ const SignIn: React.FC<SignInProps> = ({
   const [loginMessage, setLoginMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   
   const { adminLogin, userLogin, loading, error, clearError } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,8 +60,10 @@ const SignIn: React.FC<SignInProps> = ({
           type: 'success',
           text: `${isAdminLogin ? 'Admin' : 'User'} login successful!`
         });
-        // You could redirect here if needed
-        // window.location.href = '/dashboard';
+        // Redirect to home page after successful login
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000); // Short delay to show success message
       } else {
         setLoginMessage({
           type: 'error',

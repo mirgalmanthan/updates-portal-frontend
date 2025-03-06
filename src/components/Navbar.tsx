@@ -1,4 +1,6 @@
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "../styles/navbar.css"
 
 interface NavbarTab {
@@ -13,12 +15,28 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ title, tabs }) => {
+    const { isAuthenticated, userRole, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+
     return (
         <nav className="navbar">
-            <h1>{title}</h1>
-            {
-                tabs.map((tab, index) => {
-                    return (
+            <div className="navbar-left">
+                <h1>{title}</h1>
+            </div>
+            <div className="navbar-right">
+                {isAuthenticated ? (
+                    <>
+                        <Link to="/home" className="nav-link">Home</Link>
+                        <span className="user-role">{userRole === 'admin' ? 'Admin' : 'User'}</span>
+                        <button onClick={handleLogout} className="logout-button">Logout</button>
+                    </>
+                ) : (
+                    tabs.map((tab, index) => (
                         <a 
                             key={index}
                             href={tab.url || "#"} 
@@ -28,12 +46,13 @@ const Navbar: React.FC<NavbarProps> = ({ title, tabs }) => {
                                     tab.onClick();
                                 }
                             }}
+                            className="nav-link"
                         >
                             {tab.name}
                         </a>
-                    );
-                })
-            }
+                    ))
+                )}
+            </div>
         </nav>
     )
 }
