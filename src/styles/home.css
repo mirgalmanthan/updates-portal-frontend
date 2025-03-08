@@ -172,6 +172,212 @@
   cursor: not-allowed;
 }
 
+/* Admin Dashboard Styles */
+.admin-dashboard {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 900px;
+  margin-top: 20px;
+}
+
+.admin-dashboard h3 {
+  font-size: 1.5rem;
+  margin-bottom: 25px;
+  color: #333;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 15px;
+}
+
+.dashboard-tabs {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-navigation {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-button:hover {
+  color: #4a6cf7;
+}
+
+.tab-button.active {
+  color: #4a6cf7;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #4a6cf7;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.tab-content {
+  padding: 10px 0;
+}
+
+/* Registration Requests Tab */
+.registrations-tab h4,
+.updates-tab h4,
+.mail-tab h4 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #444;
+}
+
+.registration-list,
+.updates-list {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  min-height: 200px;
+}
+
+.empty-state {
+  color: #888;
+  text-align: center;
+  padding: 40px 0;
+  font-style: italic;
+}
+
+/* Updates Tab */
+.admin-date-selector {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.admin-date-selector label {
+  font-weight: 600;
+  color: #555;
+}
+
+.admin-date-selector input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.view-button {
+  background-color: #4a6cf7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.view-button:hover {
+  background-color: #3a5bd9;
+}
+
+/* Mail Tab */
+.updates-preview {
+  margin-bottom: 20px;
+}
+
+.updates-preview h5 {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  color: #444;
+  font-weight: 600;
+}
+
+.loading-updates {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.mail-info {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #4a6cf7;
+  border-radius: 4px;
+}
+
+.mail-info p {
+  margin: 0;
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.mail-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.send-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.send-button:hover {
+  background-color: #218838;
+}
+
+.send-button:disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+/* Date selector for user updates */
+.date-selector {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-selector label {
+  font-weight: 600;
+  color: #555;
+}
+
+.date-selector input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .greeting-card {
@@ -186,7 +392,28 @@
     font-size: 1.5rem;
   }
 
-  .editor-container {
+  .editor-container,
+  .admin-dashboard {
     padding: 20px 15px;
+  }
+  
+  .tab-navigation {
+    flex-wrap: wrap;
+  }
+  
+  .tab-button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+  
+  .admin-date-selector {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .admin-date-selector input[type="date"] {
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 10px;
   }
 }

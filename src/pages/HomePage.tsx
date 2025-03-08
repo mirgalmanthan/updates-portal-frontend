@@ -17,6 +17,12 @@ const HomePage: React.FC = () => {
   const formattedToday = today.toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(formattedToday);
   
+  // Admin dashboard state
+  const [activeTab, setActiveTab] = useState('registrations');
+  const [adminSelectedDate, setAdminSelectedDate] = useState(formattedToday);
+  const [isLoadingUpdates, setIsLoadingUpdates] = useState(false);
+  const [isSendingMail, setIsSendingMail] = useState(false);
+  
   const getCurrentTime = () => {
     const now = new Date();
     const hours = now.getHours();
@@ -164,6 +170,91 @@ const HomePage: React.FC = () => {
             >
               {isSaving ? 'Saving...' : 'Save Update'}
             </button>
+          </div>
+        </div>
+      )}
+      
+      {userRole === 'admin' && (
+        <div className="admin-dashboard">
+          <h3>Admin Dashboard</h3>
+          
+          <div className="dashboard-tabs">
+            <div className="tab-navigation">
+              <button 
+                className={`tab-button ${activeTab === 'registrations' ? 'active' : ''}`}
+                onClick={() => setActiveTab('registrations')}
+              >
+                Registration Requests
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'updates' ? 'active' : ''}`}
+                onClick={() => setActiveTab('updates')}
+              >
+                View Updates
+              </button>
+            </div>
+            
+            <div className="tab-content">
+              {activeTab === 'registrations' && (
+                <div className="registrations-tab">
+                  <h4>User Registration Requests</h4>
+                  <div className="registration-list">
+                    <p className="empty-state">No pending registration requests.</p>
+                    {/* Registration requests will be listed here */}
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'updates' && (
+                <div className="updates-tab">
+                  <h4>View Updates by Date</h4>
+                  <div className="date-selector admin-date-selector">
+                    <label htmlFor="admin-update-date">Select date: </label>
+                    <input 
+                      type="date" 
+                      id="admin-update-date" 
+                      value={adminSelectedDate} 
+                      onChange={(e) => setAdminSelectedDate(e.target.value)}
+                      max={formattedToday}
+                    />
+                    <button 
+                      className="view-button"
+                      onClick={() => setIsLoadingUpdates(true)}
+                      disabled={isLoadingUpdates}
+                    >
+                      {isLoadingUpdates ? 'Loading...' : 'View Updates'}
+                    </button>
+                  </div>
+                  
+                  <div className="updates-list">
+                    {isLoadingUpdates ? (
+                      <div className="loading-updates">
+                        <p>Loading updates...</p>
+                      </div>
+                    ) : (
+                      <p className="empty-state">No updates for the selected date.</p>
+                      /* Updates will be listed here when functionality is implemented */
+                    )}
+                  </div>
+                  
+                  <div className="mail-info">
+                    <p>Clicking the button below will trigger the backend to create and send a mail containing all updates for {adminSelectedDate}.</p>
+                  </div>
+                  
+                  <div className="mail-actions">
+                    <button 
+                      className="send-button"
+                      onClick={() => setIsSendingMail(true)}
+                      disabled={isSendingMail || !isLoadingUpdates}
+                    >
+                      {isSendingMail ? 'Sending...' : 'Send Mail for Selected Date'}
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+
+            </div>
           </div>
         </div>
       )}
