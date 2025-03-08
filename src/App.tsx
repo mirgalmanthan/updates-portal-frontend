@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import './App.css'
 import Navbar from './components/Navbar'
@@ -8,7 +8,7 @@ import HomePage from './pages/HomePage'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
 // Protected route component
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
 

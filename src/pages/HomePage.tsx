@@ -8,10 +8,14 @@ import { saveUpdate } from '../services/updatesService';
 const HomePage: React.FC = () => {
   const { userRole } = useAuth();
   const [editorContent, setEditorContent] = useState('');
-  const [editorJson, setEditorJson] = useState<object>({});
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const quillRef = useRef<any>(null);
+  
+  // Get today's date in YYYY-MM-DD format for the date picker default value
+  const today = new Date();
+  const formattedToday = today.toISOString().split('T')[0];
+  const [selectedDate, setSelectedDate] = useState(formattedToday);
   
   const getCurrentTime = () => {
     const now = new Date();
@@ -40,40 +44,7 @@ const HomePage: React.FC = () => {
     'list', 'bullet', 'indent',
   ];
 
-  // Helper function to convert HTML to a structured JSON object
-  const convertHtmlToJson = (html: string): object => {
-    // Simple conversion - you can enhance this based on your needs
-    const paragraphs = html.split('<p>').filter(p => p.trim() !== '').map(p => {
-      // Remove closing </p> tag and trim
-      return p.replace('</p>', '').trim();
-    });
-    
-    // Create a structured JSON object
-    const jsonContent = {
-      type: 'document',
-      content: paragraphs.map(p => {
-        // Check for formatting
-        const isBold = p.includes('<strong>');
-        const isItalic = p.includes('<em>');
-        const isUnderline = p.includes('<u>');
-        
-        // Remove HTML tags for clean text
-        const text = p.replace(/<\/?[^>]+(>|$)/g, '');
-        
-        return {
-          type: 'paragraph',
-          text,
-          formatting: {
-            bold: isBold,
-            italic: isItalic,
-            underline: isUnderline
-          }
-        };
-      })
-    };
-    
-    return jsonContent;
-  };
+ 
 
   // Handle editor content change
   const handleEditorChange = (content: string, delta: any, source: any, editor: any) => {
@@ -82,7 +53,6 @@ const HomePage: React.FC = () => {
     console.log("delta", content)
     // Convert HTML to JSON
     // const jsonContent = convertHtmlToJson(content);
-    setEditorJson(delta);
     
     // console.log('HTML Content:', content);
     // console.log('JSON Content:', jsonContent);
@@ -107,9 +77,13 @@ const HomePage: React.FC = () => {
       };
       
       console.log('Final Quill Delta:', formattedDelta);
+      console.log('Selected date:', selectedDate);
       
-      // Pass the formatted delta to saveUpdate
-      const response = await saveUpdate({ content: formattedDelta });
+      // Pass the formatted delta and selected date to saveUpdate
+      const response = await saveUpdate({ 
+        content: formattedDelta,
+        date: selectedDate 
+      });
       
       if (response.success) {
         setSaveMessage({
@@ -145,10 +119,7 @@ const HomePage: React.FC = () => {
             <p>From here, you can manage updates, users, and system settings.</p>
           </div>
         ) : (
-          <div className="role-specific-content">
-            <p>You are logged in as a <span className="highlight">User</span></p>
-            <p>Stay up to date with the latest announcements and updates.</p>
-          </div>
+          <div className="role-specific-content"></div>
         )}
       </div>
 
@@ -156,6 +127,17 @@ const HomePage: React.FC = () => {
         <div className="editor-container">
           <h3>Daily Updates</h3>
           <p className="editor-instructions">Use the editor below to write your daily updates:</p>
+          
+          <div className="date-selector">
+            <label htmlFor="update-date">Select date for this update: </label>
+            <input 
+              type="date" 
+              id="update-date" 
+              value={selectedDate} 
+              onChange={(e) => setSelectedDate(e.target.value)}
+              max={formattedToday} // Prevent selecting future dates
+            />
+          </div>
           
           {saveMessage && (
             <div className={`message ${saveMessage.type}`}>

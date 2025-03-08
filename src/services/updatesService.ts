@@ -41,6 +41,7 @@ interface QuillDelta {
 // Define the update content interface
 interface UpdateContent {
   content: QuillDelta | object;
+  date?: string; // Optional date parameter for specific date updates
   [key: string]: any;
 }
 
@@ -57,11 +58,10 @@ export const saveUpdate = async (content: UpdateContent): Promise<ApiResponse<Up
       };
     }
     
-    // Format date as required by backend (YYYY-MM-DD)
-    const today = new Date();
-    const date_of_update = today.toISOString().split('T')[0];
+    // Use the provided date or default to today's date
+    const date_of_update = content.date || new Date().toISOString().split('T')[0];
     
-    // Prepare the request payload with the Quill delta object
+    // Prepare the request payload with the Quill delta object and the selected date
     const updateData = {
       date_of_update: date_of_update,
       updates: content.content  // This is the Quill delta object
