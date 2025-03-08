@@ -63,6 +63,7 @@ const styles = {
 };
 import { saveUpdate } from '../services/updatesService';
 import authService, { RegistrationRequest } from '../services/authService';
+import adminService, { UserUpdate } from '../services/adminService';
 
 const HomePage: React.FC = () => {
   // Registration requests state
@@ -84,14 +85,20 @@ const HomePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('registrations');
   const [adminSelectedDate, setAdminSelectedDate] = useState(formattedToday);
   const [isLoadingUpdates, setIsLoadingUpdates] = useState(false);
-  const [isSendingMail, setIsSendingMail] = useState(false);
+  const [userUpdates, setUserUpdates] = useState<UserUpdate[]>([]);
+  const [isCreatingMail, setIsCreatingMail] = useState(false);
+  const [mailMessage, setMailMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   // Fetch registration requests when admin tab is active
   useEffect(() => {
-    if (userRole === 'admin' && activeTab === 'registrations') {
-      fetchRegistrationRequests();
+    if (userRole === 'admin') {
+      if (activeTab === 'registrations') {
+        fetchRegistrationRequests();
+      } else if (activeTab === 'updates') {
+        fetchUpdates();
+      }
     }
-  }, [userRole, activeTab]);
+  }, [userRole, activeTab, adminSelectedDate]);
 
   // Function to fetch registration requests
   const fetchRegistrationRequests = async () => {
@@ -143,6 +150,25 @@ const HomePage: React.FC = () => {
       });
     }
   };
+
+  // Function to fetch updates for selected date
+  const fetchUpdates = async () => {
+    setIsLoadingUpdates(true);
+    try {
+      const response = await adminService.getUpdates(adminSelectedDate);
+      if (response.success && response.data) {
+        setUserUpdates(response.data.updates);
+      } else {
+        console.error('Failed to fetch updates:', response.error);
+      }
+    } catch (error) {
+      console.error('An error occurred while fetching updates:', error);
+    } finally {
+      setIsLoadingUpdates(false);
+    }
+  };
+
+
   
   const getCurrentTime = () => {
     const now = new Date();
@@ -174,15 +200,8 @@ const HomePage: React.FC = () => {
  
 
   // Handle editor content change
-  const handleEditorChange = (content: string, delta: any, source: any, editor: any) => {
+  const handleEditorChange = (content: string) => {
     setEditorContent(content);
-    
-    console.log("delta", content)
-    // Convert HTML to JSON
-    // const jsonContent = convertHtmlToJson(content);
-    
-    // console.log('HTML Content:', content);
-    // console.log('JSON Content:', jsonContent);
   };
 
   const handleSaveUpdate = async () => {
@@ -246,7 +265,10 @@ const HomePage: React.FC = () => {
             <p>From here, you can manage updates, users, and system settings.</p>
           </div>
         ) : (
-          <div className="role-specific-content"></div>
+          <div className="role-specific-content">
+            <p>You are logged in as a <span className="highlight">User</span></p>
+            <p>From here, you can submit and manage your daily updates.</p>
+          </div>
         )}
       </div>
 
@@ -300,15 +322,30 @@ const HomePage: React.FC = () => {
           <h3>Admin Dashboard</h3>
           
           <div className="dashboard-tabs">
-            <div className="tab-navigation">
+            <div className="tab-navigation" style={{ marginBottom: '20px' }}>
               <button 
-                className={`tab-button ${activeTab === 'registrations' ? 'active' : ''}`}
+                style={{
+                  padding: '10px 20px',
+                  marginRight: '10px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  backgroundColor: activeTab === 'registrations' ? '#007bff' : '#e9ecef',
+                  color: activeTab === 'registrations' ? 'white' : '#333'
+                }}
                 onClick={() => setActiveTab('registrations')}
               >
                 Registration Requests
               </button>
               <button 
-                className={`tab-button ${activeTab === 'updates' ? 'active' : ''}`}
+                style={{
+                  padding: '10px 20px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  backgroundColor: activeTab === 'updates' ? '#007bff' : '#e9ecef',
+                  color: activeTab === 'updates' ? 'white' : '#333'
+                }}
                 onClick={() => setActiveTab('updates')}
               >
                 View Updates
@@ -316,7 +353,7 @@ const HomePage: React.FC = () => {
             </div>
             
             <div className="tab-content">
-              {activeTab === 'registrations' && (
+              {activeTab === 'registrations' ? (
                 <div className="registrations-tab">
                   <h4>User Registration Requests</h4>
                   {requestActionMessage && (
@@ -354,60 +391,134 @@ const HomePage: React.FC = () => {
                         </div>
                       ))
                     )}
-
                   </div>
                 </div>
-              )}
-              
-              {activeTab === 'updates' && (
+              ) : activeTab === 'updates' && (
                 <div className="updates-tab">
-                  <h4>View Updates by Date</h4>
-                  <div className="date-selector admin-date-selector">
-                    <label htmlFor="admin-update-date">Select date: </label>
+                  <h4>View Daily Updates</h4>
+                  
+                  <div className="date-selector" style={{ marginBottom: '20px' }}>
+                    <label htmlFor="admin-update-date" style={{ marginRight: '10px' }}>Select date to view updates: </label>
                     <input 
                       type="date" 
                       id="admin-update-date" 
                       value={adminSelectedDate} 
                       onChange={(e) => setAdminSelectedDate(e.target.value)}
                       max={formattedToday}
+                      style={{
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid #ddd'
+                      }}
                     />
-                    <button 
-                      className="view-button"
-                      onClick={() => setIsLoadingUpdates(true)}
-                      disabled={isLoadingUpdates}
-                    >
-                      {isLoadingUpdates ? 'Loading...' : 'View Updates'}
-                    </button>
                   </div>
-                  
-                  <div className="updates-list">
+
+                  <div className="updates-list" style={{ marginBottom: '30px' }}>
                     {isLoadingUpdates ? (
-                      <div className="loading-updates">
-                        <p>Loading updates...</p>
-                      </div>
+                      <div className="loading-message">Loading updates...</div>
+                    ) : userUpdates.length === 0 ? (
+                      <div className="no-updates-message">No updates found for selected date</div>
                     ) : (
-                      <p className="empty-state">No updates for the selected date.</p>
-                      /* Updates will be listed here when functionality is implemented */
+                      <div style={{ width: '100%', overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                          <thead>
+                            <tr>
+                              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', backgroundColor: '#f8f9fa' }}>Name</th>
+                              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', backgroundColor: '#f8f9fa' }}>Role</th>
+                              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd', backgroundColor: '#f8f9fa' }}>Updates</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {userUpdates.map(update => (
+                              <tr key={update._id} style={{ borderBottom: '1px solid #ddd' }}>
+                                <td style={{ padding: '12px' }}>{update.name}</td>
+                                <td style={{ padding: '12px' }}>{update.role}</td>
+                                <td style={{ padding: '12px' }}>
+                                  <div className="ql-container ql-snow" style={{ border: 'none' }}>
+                                    <div 
+                                      className="ql-editor" 
+                                      style={{ padding: '0' }}
+                                      dangerouslySetInnerHTML={{
+                                        __html: update.updates.ops.map((op: { insert?: string; attributes?: { bold?: boolean; underline?: boolean; list?: string } }) => {
+                                          let html = op.insert || '';
+                                          if (op.attributes) {
+                                            if (op.attributes.bold) html = `<strong>${html}</strong>`;
+                                            if (op.attributes.underline) html = `<u>${html}</u>`;
+                                            if (op.attributes.list === 'bullet') html = `<li>${html}</li>`;
+                                          }
+                                          return html;
+                                        }).join('')
+                                      }}
+                                    />
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     )}
                   </div>
-                  
-                  <div className="mail-info">
-                    <p>Clicking the button below will trigger the backend to create and send a mail containing all updates for {adminSelectedDate}.</p>
-                  </div>
-                  
-                  <div className="mail-actions">
-                    <button 
-                      className="send-button"
-                      onClick={() => setIsSendingMail(true)}
-                      disabled={isSendingMail || !isLoadingUpdates}
-                    >
-                      {isSendingMail ? 'Sending...' : 'Send Mail for Selected Date'}
-                    </button>
-                  </div>
+                  {userUpdates.length > 0 && (
+                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                      <button
+                        style={{
+                          backgroundColor: '#007bff',
+                          color: 'white',
+                          border: 'none',
+                          padding: '10px 20px',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          opacity: isCreatingMail ? 0.7 : 1
+                        }}
+                        onClick={async () => {
+                          setIsCreatingMail(true);
+                          setMailMessage(null);
+                          try {
+                            const response = await adminService.createMailForDate(adminSelectedDate);
+                            if (response.success) {
+                              setMailMessage({
+                                type: 'success',
+                                text: 'Email created and sent successfully!'
+                              });
+                            } else {
+                              setMailMessage({
+                                type: 'error',
+                                text: response.error || 'Failed to create and send email'
+                              });
+                            }
+                          } catch (error) {
+                            setMailMessage({
+                              type: 'error',
+                              text: 'An error occurred while creating and sending email'
+                            });
+                          } finally {
+                            setIsCreatingMail(false);
+                          }
+                        }}
+                        disabled={isCreatingMail}
+                      >
+                        {isCreatingMail ? 'Creating and Sending Email...' : 'Create and Send Email'}
+                      </button>
+                      {mailMessage && (
+                        <div
+                          style={{
+                            marginTop: '10px',
+                            padding: '10px',
+                            borderRadius: '4px',
+                            backgroundColor: mailMessage.type === 'success' ? '#dff0d8' : '#f2dede',
+                            color: mailMessage.type === 'success' ? '#3c763d' : '#a94442',
+                            border: `1px solid ${mailMessage.type === 'success' ? '#d6e9c6' : '#ebccd1'}`
+                          }}
+                        >
+                          {mailMessage.text}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
-              
-
             </div>
           </div>
         </div>
