@@ -1,11 +1,74 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import '../styles/home.css';
+
+// Styles for registration requests
+const styles = {
+  registrationRequestCard: {
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    padding: '16px',
+    marginBottom: '16px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  requestDetails: {
+    flex: 1
+  },
+  requestActions: {
+    display: 'flex',
+    gap: '8px'
+  },
+  acceptButton: {
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    padding: '8px 16px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#45a049'
+    }
+  },
+  rejectButton: {
+    backgroundColor: '#f44336',
+    color: 'white',
+    border: 'none',
+    padding: '8px 16px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#da190b'
+    }
+  },
+  message: {
+    padding: '12px',
+    marginBottom: '16px',
+    borderRadius: '4px',
+    '&.success': {
+      backgroundColor: '#dff0d8',
+      color: '#3c763d',
+      border: '1px solid #d6e9c6'
+    },
+    '&.error': {
+      backgroundColor: '#f2dede',
+      color: '#a94442',
+      border: '1px solid #ebccd1'
+    }
+  }
+};
 import { saveUpdate } from '../services/updatesService';
+import authService, { RegistrationRequest } from '../services/authService';
 
 const HomePage: React.FC = () => {
+  // Registration requests state
+  const [registrationRequests, setRegistrationRequests] = useState<RegistrationRequest[]>([]);
+  const [isLoadingRequests, setIsLoadingRequests] = useState(false);
+  const [requestActionMessage, setRequestActionMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const { userRole } = useAuth();
   const [editorContent, setEditorContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -22,6 +85,64 @@ const HomePage: React.FC = () => {
   const [adminSelectedDate, setAdminSelectedDate] = useState(formattedToday);
   const [isLoadingUpdates, setIsLoadingUpdates] = useState(false);
   const [isSendingMail, setIsSendingMail] = useState(false);
+
+  // Fetch registration requests when admin tab is active
+  useEffect(() => {
+    if (userRole === 'admin' && activeTab === 'registrations') {
+      fetchRegistrationRequests();
+    }
+  }, [userRole, activeTab]);
+
+  // Function to fetch registration requests
+  const fetchRegistrationRequests = async () => {
+    setIsLoadingRequests(true);
+    try {
+      const response = await authService.getRegistrationRequests();
+      if (response.success && response.data) {
+        setRegistrationRequests(response.data.requests);
+      } else {
+        setRequestActionMessage({
+          type: 'error',
+          text: response.error || 'Failed to fetch registration requests'
+        });
+      }
+    } catch (error) {
+      setRequestActionMessage({
+        type: 'error',
+        text: 'An error occurred while fetching registration requests'
+      });
+    } finally {
+      setIsLoadingRequests(false);
+    }
+  };
+
+  // Function to handle registration request actions (accept/reject)
+  const handleRegistrationAction = async (requestId: string, action: 'accept' | 'reject') => {
+    try {
+      const response = await (action === 'accept' 
+        ? authService.acceptRegistration(requestId)
+        : authService.rejectRegistration(requestId));
+
+      if (response.success) {
+        setRequestActionMessage({
+          type: 'success',
+          text: `Successfully ${action}ed registration request`
+        });
+        // Refresh the registration requests list
+        fetchRegistrationRequests();
+      } else {
+        setRequestActionMessage({
+          type: 'error',
+          text: response.error || `Failed to ${action} registration request`
+        });
+      }
+    } catch (error) {
+      setRequestActionMessage({
+        type: 'error',
+        text: `An error occurred while ${action}ing registration request`
+      });
+    }
+  };
   
   const getCurrentTime = () => {
     const now = new Date();
@@ -198,9 +319,42 @@ const HomePage: React.FC = () => {
               {activeTab === 'registrations' && (
                 <div className="registrations-tab">
                   <h4>User Registration Requests</h4>
+                  {requestActionMessage && (
+                    <div style={{...styles.message, ...(styles as any)[`&.${requestActionMessage.type}`]}}>
+                      {requestActionMessage.text}
+                    </div>
+                  )}
                   <div className="registration-list">
-                    <p className="empty-state">No pending registration requests.</p>
-                    {/* Registration requests will be listed here */}
+                    {isLoadingRequests ? (
+                      <div className="loading-message">Loading registration requests...</div>
+                    ) : registrationRequests.length === 0 ? (
+                      <div className="no-requests-message">No pending registration requests</div>
+                    ) : (
+                      registrationRequests.map(request => (
+                        <div key={request._id} style={styles.registrationRequestCard}>
+                          <div style={styles.requestDetails}>
+                            <h5>{request.full_name}</h5>
+                            <p><strong>Email:</strong> {request.email}</p>
+                            <p><strong>Role:</strong> {request.role}</p>
+                          </div>
+                          <div style={styles.requestActions}>
+                            <button
+                              style={styles.acceptButton}
+                              onClick={() => handleRegistrationAction(request._id, 'accept')}
+                            >
+                              Accept
+                            </button>
+                            <button
+                              style={styles.rejectButton}
+                              onClick={() => handleRegistrationAction(request._id, 'reject')}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+
                   </div>
                 </div>
               )}

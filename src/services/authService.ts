@@ -1,7 +1,16 @@
-import axios from 'axios';
+
 import apiClient, { ApiResponse } from './api';
 
 // Types
+export interface RegistrationRequest {
+  _id: string;
+  email: string;
+  password: string;
+  full_name: string;
+  role: string;
+  __v: number;
+}
+
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -31,6 +40,53 @@ export interface AuthResponse {
 
 // Auth service functions
 const authService = {
+  // Get all registration requests (admin only)
+  getRegistrationRequests: async (): Promise<ApiResponse<{ requests: RegistrationRequest[] }>> => {
+    try {
+      const response = await apiClient.get('/admin/getRegRequests');
+      return {
+        success: true,
+        data: response.data.payload
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.response?.data?.payload?.message || 'Failed to fetch registration requests.'
+      };
+    }
+  },
+
+  // Accept registration request (admin only)
+  acceptRegistration: async (requestId: string): Promise<ApiResponse<{ message: string }>> => {
+    try {
+      const response = await apiClient.post(`/admin/acceptRegRequest/${requestId}`);
+      return {
+        success: true,
+        data: response.data.payload
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.response?.data?.payload?.message || 'Failed to accept registration request.'
+      };
+    }
+  },
+
+  // Reject registration request (admin only)
+  rejectRegistration: async (requestId: string): Promise<ApiResponse<{ message: string }>> => {
+    try {
+      const response = await apiClient.post(`/admin/rejectRegRequest/${requestId}`);
+      return {
+        success: true,
+        data: response.data.payload
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.response?.data?.payload?.message || 'Failed to reject registration request.'
+      };
+    }
+  },
   // Admin login
   adminLogin: async (credentials: LoginCredentials): Promise<ApiResponse<AuthResponse>> => {
     try {
@@ -159,5 +215,7 @@ const authService = {
     return userData ? JSON.parse(userData) : null;
   }
 };
+
+
 
 export default authService;
