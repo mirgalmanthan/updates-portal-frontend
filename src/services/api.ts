@@ -1,8 +1,8 @@
 import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios';
-
+ 
 // Base API URL - use proxy in development
-const API_BASE_URL = 'https://6t2qxf4x45.execute-api.ap-south-1.amazonaws.com/v1/api';
-
+const API_BASE_URL = 'http://localhost:3000/api';
+ 
 // Create axios instance with default config
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -12,14 +12,14 @@ const apiClient: AxiosInstance = axios.create({
   timeout: 10000, // 10 seconds timeout
   withCredentials: true
 });
-
+ 
 // Response interface
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
   error?: string;
 }
-
+ 
 // Add request interceptor for auth token if needed
 apiClient.interceptors.request.use(
   (config) => {
@@ -32,7 +32,7 @@ apiClient.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
+ 
 // Add response interceptor for error handling
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
@@ -60,5 +60,5 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
+ 
 export default apiClient;

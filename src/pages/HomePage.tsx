@@ -187,16 +187,16 @@ const HomePage: React.FC = () => {
   const modules = {
     toolbar: [
       ['bold', 'italic', 'underline'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+      [{ list: 'ordered' }, { list: 'bullet' }], // Bullet list inside toolbar
+      [{ indent: '-1' }, { indent: '+1' }]
     ]
   };
 
   // Quill editor formats
   const formats = [
     'bold', 'italic', 'underline',
-    'list', 'bullet', 'indent',
+    'list', 'indent' // Removed 'bullet'
   ];
-
  
 
   // Handle editor content change

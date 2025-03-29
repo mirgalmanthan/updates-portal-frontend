@@ -1,6 +1,10 @@
 
 import apiClient, { ApiResponse } from './api';
 
+
+const TOKEN_EXPIRATION_KEY = 'token_expiration';
+const expirationTime = Date.now() + 1 * 60 * 60 * 1000; // 10 hours in milliseconds
+
 // Types
 export interface RegistrationRequest {
   _id: string;
@@ -102,14 +106,15 @@ const authService = {
         }
       });
 
-      
-      
+
+
       // Store token in localStorage if login successful
       if (response.data && response.data.payload?.accessToken) {
         localStorage.setItem('auth_token', response.data.payload.accessToken);
         localStorage.setItem('user_role', 'admin');
+        localStorage.setItem(TOKEN_EXPIRATION_KEY, expirationTime.toString()); // Store expiration time
       }
-      
+
       return {
         success: true,
         data: {
@@ -129,13 +134,13 @@ const authService = {
       };
     }
   },
-  
+
   // User login
   userLogin: async (credentials: EmailLoginCredentials): Promise<ApiResponse<AuthResponse>> => {
     try {
       const response = await apiClient.post('/user/login', credentials);
       console.log("Response from login:", response.data);
-      
+
       // Store token in localStorage if login successful
       // The backend returns { error: false, success: true, payload: { accessToken } }
       if (response.data && response.data.payload && response.data.payload.accessToken) {
@@ -143,13 +148,20 @@ const authService = {
         console.log("Setting auth_token:", token);
         localStorage.setItem('auth_token', token);
         localStorage.setItem('user_role', 'user');
-        
+        const expiryDate = new Date(expirationTime);
+        const now = new Date(Date.now());
+        console.log(now.toLocaleString()); // Convert to local time format
+        console.log(expiryDate.toUTCString()); // Get human-readable date
+        console.log(expiryDate.toLocaleString()); // Get local time and date format
+        // console.log(TOKEN_EXPIRATION_KEY, expirationTime)
+        localStorage.setItem(TOKEN_EXPIRATION_KEY, expirationTime.toString()); // Store expiration time
+
         // You can also store user data if available
         // localStorage.setItem('user_data', JSON.stringify(response.data.user));
       } else {
         console.error("Token not found in response:", response.data);
       }
-      
+
       return {
         success: true,
         data: {
@@ -169,12 +181,12 @@ const authService = {
       };
     }
   },
-  
+
   // User registration
   registerUser: async (data: RegistrationData): Promise<ApiResponse<{ payload: any }>> => {
     try {
       const response = await apiClient.post('/user/register', data);
-      
+
       return {
         success: true,
         data: response.data
@@ -186,29 +198,42 @@ const authService = {
       };
     }
   },
-  
+
   // Logout
   logout: () => {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_role');
     localStorage.removeItem('user_data');
+    localStorage.removeItem(TOKEN_EXPIRATION_KEY); // Remove expiration time
   },
-  
-  // Check if user is authenticated
+
+  // // Check if user is authenticated
+  // isAuthenticated: (): boolean => {
+  //   return !!localStorage.getItem('auth_token');
+  // },
+
   isAuthenticated: (): boolean => {
-    return !!localStorage.getItem('auth_token');
+    const token = localStorage.getItem('auth_token');
+    const expirationTime = localStorage.getItem(TOKEN_EXPIRATION_KEY);
+
+    if (!token || !expirationTime) {
+      return false;
+    }
+
+    return parseInt(expirationTime, 10) > Date.now(); // Check if expiration time is in the future
   },
-  
+
+
   // Get user role
   getUserRole: (): string | null => {
     return localStorage.getItem('user_role');
   },
-  
+
   // Get authentication token
   getToken: (): string | null => {
     return localStorage.getItem('auth_token');
   },
-  
+
   // Get current user
   getCurrentUser: () => {
     const userData = localStorage.getItem('user_data');
