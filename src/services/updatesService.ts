@@ -2,9 +2,6 @@ import axios from 'axios';
 import authService from './authService';
 import apiClient from './api';
 
-// Define the base URL for the API - using the same as in api.ts
-const API_BASE_URL = 'https://6t2qxf4x45.execute-api.ap-south-1.amazonaws.com/v1/api';
-
 // Define the interface for an update
 export interface Update {
   id?: string;

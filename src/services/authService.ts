@@ -171,7 +171,7 @@ const authService = {
   },
   
   // User registration
-  registerUser: async (data: RegistrationData): Promise<ApiResponse<{ message: string }>> => {
+  registerUser: async (data: RegistrationData): Promise<ApiResponse<{ payload: any }>> => {
     try {
       const response = await apiClient.post('/user/register', data);
       
