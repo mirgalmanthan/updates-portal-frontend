@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: calc(100vh - 80px); /* Adjust based on navbar height */
+  min-height: calc(100vh - 80px);
+  /* Adjust based on navbar height */
   padding: 20px;
   background-color: #f5f7fa;
 }
@@ -26,13 +27,21 @@
 .greeting-card h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
-  color: #333;
+  color: rgb(8, 255, 82);
+  animation: bounceIn 0.5s ease-in-out;
+  ;
+  animation-duration: 2s;
+  animation-iteration-count: 1;
 }
 
 .greeting-card h2 {
   font-size: 1.8rem;
   margin-bottom: 30px;
   color: #555;
+  opacity: 1;
+  animation: flipInX 0.5s ease-in-out;
+  animation-duration: 2s;
+  animation-iteration-count: 1;
 }
 
 .role-specific-content {
@@ -83,6 +92,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -108,8 +118,12 @@
 
 .editor-instructions {
   font-size: 1rem;
-  color: #666;
+  color: #525151;
   margin-bottom: 20px;
+  border-left: 5px solid #FFA000;
+  border-right: 5px solid #FFA000;
+  /* Amber accent */
+  padding: 10px;
 }
 
 .quill-editor {
@@ -152,7 +166,7 @@
 }
 
 .save-button {
-  background-color: #4a6cf7;
+  background: linear-gradient(135deg, #0032f8, #00e9fa);
   color: white;
   border: none;
   border-radius: 6px;
@@ -164,11 +178,12 @@
 }
 
 .save-button:hover {
-  background-color: #3a5bd9;
+  background: linear-gradient(135deg, #28a745, #00fa15);
+
 }
 
 .save-button:disabled {
-  background-color: #a0a0a0;
+  background: linear-gradient(135deg, #a0a0a0, #a0a0a0);
   cursor: not-allowed;
 }
 
@@ -364,17 +379,18 @@
   display: flex;
   align-items: center;
   gap: 10px;
+
 }
 
 .date-selector label {
   font-weight: 600;
-  color: #555;
+  color: #28A745;
 }
 
 .date-selector input[type="date"] {
   padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 2px inset #2fff00;
+  border-radius: 19px;
   font-size: 0.9rem;
 }
 
@@ -383,11 +399,11 @@
   .greeting-card {
     padding: 30px 20px;
   }
-  
+
   .greeting-card h1 {
     font-size: 2rem;
   }
-  
+
   .greeting-card h2 {
     font-size: 1.5rem;
   }
@@ -396,21 +412,21 @@
   .admin-dashboard {
     padding: 20px 15px;
   }
-  
+
   .tab-navigation {
     flex-wrap: wrap;
   }
-  
+
   .tab-button {
     padding: 10px 15px;
     font-size: 0.9rem;
   }
-  
+
   .admin-date-selector {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .admin-date-selector input[type="date"] {
     width: 100%;
     margin-top: 5px;
