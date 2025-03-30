@@ -6,6 +6,19 @@
   font-family: "Quicksand";
   color: #333;
 }
+/* :root {
+  --navbar-text-morning: #2C3E50;  /* Dark Blue for daytime */
+  /* --navbar-text-night: #FFD700;  Gold for nighttime */
+/* } */
+
+/* Apply the time-based color */
+/* [data-theme="light"] .navbar {
+  color: var(--navbar-text-morning);
+}
+
+[data-theme="dark"] .navbar {
+  color: var(--navbar-text-night);
+} */ */
 
 .navbar {
   padding: 15px 30px;
@@ -14,13 +27,14 @@
   margin: 0 auto;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f2f2f2;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   border-radius: 12px;
   /* Soft rounded corners */
   border: 2px solid #ddd;
   /* Subtle border */
   box-sizing: border-box;
+  /* color: var(--navbar-text-current); */
+  /* transition: color 0.5s ease-in-out; */
 }
 
 
@@ -55,6 +69,10 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: blueviolet;
+  animation: heartBeat 0.1s ease-in-out;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+
 }
 
 .logout-button {

@@ -1,7 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/navbar.css"
+// import { useEffect } from "react";
+import "../styles/navbar.css";
 
 interface NavbarTab {
     name: string;
@@ -12,11 +13,18 @@ interface NavbarTab {
 interface NavbarProps {
     title: string;
     tabs: NavbarTab[];
+    // theme: "light" | "dark";  // Accept theme as prop
 }
 
-const Navbar: React.FC<NavbarProps> = ({ title, tabs }) => {
+const Navbar: React.FC<NavbarProps> = ({ title, tabs }) => { // add themes when needed
     const { isAuthenticated, userRole, logout } = useAuth();
     const navigate = useNavigate();
+
+    // Apply theme when component mounts or theme changes
+    // useEffect(() => {
+    //     document.body.setAttribute("data-theme", theme);
+    //     localStorage.setItem("theme", theme);
+    // }, [theme]);
 
     const handleLogout = () => {
         logout();
@@ -37,9 +45,9 @@ const Navbar: React.FC<NavbarProps> = ({ title, tabs }) => {
                     </>
                 ) : (
                     tabs.map((tab, index) => (
-                        <a 
+                        <a
                             key={index}
-                            href={tab.url || "#"} 
+                            href={tab.url || "#"}
                             onClick={(e) => {
                                 if (tab.onClick) {
                                     e.preventDefault();

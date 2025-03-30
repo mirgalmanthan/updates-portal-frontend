@@ -1,3 +1,17 @@
+/* :root {
+  --background-day: linear-gradient(to bottom, #E3F2FD, #FFF5E1);  /* Light mode */
+  /* --background-night: linear-gradient(to bottom, #1E1E2E, #3A3A4F); Dark mode */
+  /* --background-current: var(--background-day); Default to day */
+/* } */
+
+/* body {
+  background: var(--background-current);
+  background-size: cover;
+  background-position: center;
+  transition: all 0.5s ease-in-out;
+} */ 
+
+
 .home-container {
   display: flex;
   flex-direction: column;
@@ -5,7 +19,7 @@
   min-height: calc(100vh - 80px);
   /* Adjust based on navbar height */
   padding: 20px;
-  background-color: #f5f7fa;
+  background-color: linear-gradient(to bottom, #E3F2FD, #FFF5E1) ;
 }
 
 .greeting-card {
@@ -20,16 +34,11 @@
   margin-bottom: 30px;
 }
 
-.greeting-card:hover {
-  transform: translateY(-5px);
-}
-
 .greeting-card h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
   color: rgb(8, 255, 82);
   animation: bounceIn 0.5s ease-in-out;
-  ;
   animation-duration: 2s;
   animation-iteration-count: 1;
 }
@@ -51,18 +60,20 @@
 }
 
 .role-specific-content p {
-  font-size: 1.2rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1;
   color: #666;
   margin-bottom: 15px;
+  font-family: "Audiowide", sans-serif;
 }
 
 .highlight {
   font-weight: bold;
   color: #4a6cf7;
   padding: 2px 6px;
-  background-color: rgba(74, 108, 247, 0.1);
+  background-color: #4a6cf71a;
   border-radius: 4px;
+  
 }
 
 /* Message Styles */
@@ -101,7 +112,7 @@
 
 /* Rich Text Editor Styles */
 .editor-container {
-  background-color: white;
+  background-color: #d6daf6;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   padding: 30px;
@@ -114,45 +125,46 @@
   font-size: 1.5rem;
   margin-bottom: 15px;
   color: #333;
+  font-family: Copperplate, Papyrus, fantasy;
 }
 
 .editor-instructions {
   font-size: 1rem;
-  color: #525151;
+  color: #333;
   margin-bottom: 20px;
-  border-left: 5px solid #FFA000;
-  border-right: 5px solid #FFA000;
-  /* Amber accent */
   padding: 10px;
+  font-family: "Courier New", Courier, monospace;
 }
 
 .quill-editor {
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
   margin-bottom: 20px;
 }
 
 /* Quill specific overrides */
 .quill-editor .ql-toolbar {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  background-color: #daffd8;
+  border: 2px outset #8403fd;
 }
 
 .quill-editor .ql-container {
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  border: 1px solid #ddd;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  border: 2px inset #8403fd;
   border-top: none;
   min-height: 200px;
   font-family: 'Quicksand', sans-serif;
+  background-color: #d6daf6;
 }
 
 .quill-editor .ql-editor {
   min-height: 200px;
   font-size: 1rem;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 .quill-editor .ql-editor p {
@@ -225,12 +237,14 @@
   font-weight: 600;
   color: #666;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-in;
   position: relative;
+  font-size: 0.9rem;
 }
 
 .tab-button:hover {
   color: #4a6cf7;
+  
 }
 
 .tab-button.active {
@@ -384,7 +398,7 @@
 
 .date-selector label {
   font-weight: 600;
-  color: #28A745;
+  color: #01731c;
 }
 
 .date-selector input[type="date"] {
@@ -416,12 +430,7 @@
   .tab-navigation {
     flex-wrap: wrap;
   }
-
-  .tab-button {
-    padding: 10px 15px;
-    font-size: 0.9rem;
-  }
-
+  
   .admin-date-selector {
     flex-direction: column;
     align-items: flex-start;

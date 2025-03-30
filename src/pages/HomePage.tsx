@@ -75,12 +75,12 @@ const HomePage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const quillRef = useRef<any>(null);
-  
+
   // Get today's date in YYYY-MM-DD format for the date picker default value
   const today = new Date();
   const formattedToday = today.toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(formattedToday);
-  
+
   // Admin dashboard state
   const [activeTab, setActiveTab] = useState('registrations');
   const [adminSelectedDate, setAdminSelectedDate] = useState(formattedToday);
@@ -126,7 +126,7 @@ const HomePage: React.FC = () => {
   // Function to handle registration request actions (accept/reject)
   const handleRegistrationAction = async (requestId: string, action: 'accept' | 'reject') => {
     try {
-      const response = await (action === 'accept' 
+      const response = await (action === 'accept'
         ? authService.acceptRegistration(requestId)
         : authService.rejectRegistration(requestId));
 
@@ -169,11 +169,11 @@ const HomePage: React.FC = () => {
   };
 
 
-  
+
   const getCurrentTime = () => {
     const now = new Date();
     const hours = now.getHours();
-    
+
     if (hours < 12) {
       return 'Good morning';
     } else if (hours < 18) {
@@ -182,6 +182,32 @@ const HomePage: React.FC = () => {
       return 'Good evening';
     }
   };
+
+
+  
+
+  // useEffect(() => {
+  //   const updateTheme = () => {
+  //     let hour = new Date().getHours();
+  //     const root = document.documentElement; // Target :root for global styles
+
+  //     if (hour >= 6 && hour < 12) {
+  //       root.style.setProperty("--background-current", "var(--background-morning)");
+  //       // root.style.setProperty("--navbar-text-current", "var(--navbar-text-morning)");
+  //     } else if (hour >= 12 && hour < 18) {
+  //       root.style.setProperty("--background-current", "var(--background-afternoon)");
+  //       // root.style.setProperty("--navbar-text-current", "var(--navbar-text-afternoon)");
+  //     } else {
+  //       root.style.setProperty("--background-current", "var(--background-night)");
+  //       root.style.setProperty("--navbar-text-current", "var(--navbar-text-night)");
+  //     }
+  //   };
+
+  //   updateTheme(); // Run on load
+  //   const interval = setInterval(updateTheme, 60000); // Update every minute
+
+  //   return () => clearInterval(interval); // Cleanup on unmount
+  // }, []);
 
   // Quill editor modules configuration
   const modules = {
@@ -197,7 +223,7 @@ const HomePage: React.FC = () => {
     'bold', 'italic', 'underline',
     'list', 'indent' // Removed 'bullet'
   ];
- 
+
 
   // Handle editor content change
   const handleEditorChange = (content: string) => {
@@ -206,31 +232,31 @@ const HomePage: React.FC = () => {
 
   const handleSaveUpdate = async () => {
     if (!editorContent.trim()) return;
-    
+
     setIsSaving(true);
     setSaveMessage(null);
-    
+
     try {
       // Get the Quill editor instance
       const quillEditor = quillRef.current.getEditor();
-      
+
       // Get the contents as a Delta object
       const delta = quillEditor.getContents();
-      
+
       // Format the delta in the required structure
       const formattedDelta = {
         ops: delta.ops
       };
-      
+
       console.log('Final Quill Delta:', formattedDelta);
       console.log('Selected date:', selectedDate);
-      
+
       // Pass the formatted delta and selected date to saveUpdate
-      const response = await saveUpdate({ 
+      const response = await saveUpdate({
         content: formattedDelta,
-        date: selectedDate 
+        date: selectedDate
       });
-      
+
       if (response.success) {
         setSaveMessage({
           type: 'success',
@@ -276,26 +302,26 @@ const HomePage: React.FC = () => {
         <div className="editor-container">
           <h3>Daily Updates</h3>
           <p className="editor-instructions">Use the editor below to write your daily updates:</p>
-          
+
           <div className="date-selector">
             <label htmlFor="update-date">Select date for this update: </label>
-            <input 
-              type="date" 
-              id="update-date" 
-              value={selectedDate} 
+            <input
+              type="date"
+              id="update-date"
+              value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               max={formattedToday} // Prevent selecting future dates
             />
           </div>
-          
+
           {saveMessage && (
             <div className={`message ${saveMessage.type}`}>
               {saveMessage.text}
             </div>
           )}
-          
+
           <div className="quill-editor">
-            <ReactQuill 
+            <ReactQuill
               ref={quillRef}
               theme="snow"
               value={editorContent}
@@ -306,8 +332,8 @@ const HomePage: React.FC = () => {
             />
           </div>
           <div className="editor-actions">
-            <button 
-              className="save-button" 
+            <button
+              className="save-button"
               onClick={handleSaveUpdate}
               disabled={!editorContent.trim() || isSaving}
             >
@@ -316,14 +342,14 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       {userRole === 'admin' && (
         <div className="admin-dashboard">
           <h3>Admin Dashboard</h3>
-          
+
           <div className="dashboard-tabs">
             <div className="tab-navigation" style={{ marginBottom: '20px' }}>
-              <button 
+              <button
                 style={{
                   padding: '10px 20px',
                   marginRight: '10px',
@@ -337,7 +363,7 @@ const HomePage: React.FC = () => {
               >
                 Registration Requests
               </button>
-              <button 
+              <button
                 style={{
                   padding: '10px 20px',
                   border: 'none',
@@ -351,13 +377,13 @@ const HomePage: React.FC = () => {
                 View Updates
               </button>
             </div>
-            
+
             <div className="tab-content">
               {activeTab === 'registrations' ? (
                 <div className="registrations-tab">
                   <h4>User Registration Requests</h4>
                   {requestActionMessage && (
-                    <div style={{...styles.message, ...(styles as any)[`&.${requestActionMessage.type}`]}}>
+                    <div style={{...styles.message, ...(styles as any)[`&.${requestActionMessage.type}`] }}>
                       {requestActionMessage.text}
                     </div>
                   )}
@@ -396,13 +422,13 @@ const HomePage: React.FC = () => {
               ) : activeTab === 'updates' && (
                 <div className="updates-tab">
                   <h4>View Daily Updates</h4>
-                  
+
                   <div className="date-selector" style={{ marginBottom: '20px' }}>
                     <label htmlFor="admin-update-date" style={{ marginRight: '10px' }}>Select date to view updates: </label>
-                    <input 
-                      type="date" 
-                      id="admin-update-date" 
-                      value={adminSelectedDate} 
+                    <input
+                      type="date"
+                      id="admin-update-date"
+                      value={adminSelectedDate}
                       onChange={(e) => setAdminSelectedDate(e.target.value)}
                       max={formattedToday}
                       style={{
@@ -435,8 +461,8 @@ const HomePage: React.FC = () => {
                                 <td style={{ padding: '12px' }}>{update.role}</td>
                                 <td style={{ padding: '12px' }}>
                                   <div className="ql-container ql-snow" style={{ border: 'none' }}>
-                                    <div 
-                                      className="ql-editor" 
+                                    <div
+                                      className="ql-editor"
                                       style={{ padding: '0' }}
                                       dangerouslySetInnerHTML={{
                                         __html: update.updates.ops.map((op: { insert?: string; attributes?: { bold?: boolean; underline?: boolean; list?: string } }) => {
