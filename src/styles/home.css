@@ -270,7 +270,8 @@
 /* Registration Requests Tab */
 .registrations-tab h4,
 .updates-tab h4,
-.mail-tab h4 {
+.mail-tab h4 
+.leaves-tab h4 {
   font-size: 1.2rem;
   margin-bottom: 15px;
   color: #444;

@@ -184,7 +184,7 @@ const HomePage: React.FC = () => {
   };
 
 
-  
+
 
   // useEffect(() => {
   //   const updateTheme = () => {
@@ -368,6 +368,7 @@ const HomePage: React.FC = () => {
                   padding: '10px 20px',
                   border: 'none',
                   borderRadius: '4px',
+                  marginRight: '10px',
                   cursor: 'pointer',
                   backgroundColor: activeTab === 'updates' ? '#007bff' : '#e9ecef',
                   color: activeTab === 'updates' ? 'white' : '#333'
@@ -376,6 +377,19 @@ const HomePage: React.FC = () => {
               >
                 View Updates
               </button>
+              <button
+                style={{
+                  padding: '10px 20px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  backgroundColor: activeTab === 'leaves' ? '#007bff' : '#e9ecef',
+                  color: activeTab === 'leaves' ? 'white' : '#333'
+                }
+                }
+                onClick={() => setActiveTab('leaves')}>
+                Leaves
+              </button>
             </div>
 
             <div className="tab-content">
@@ -383,7 +397,7 @@ const HomePage: React.FC = () => {
                 <div className="registrations-tab">
                   <h4>User Registration Requests</h4>
                   {requestActionMessage && (
-                    <div style={{...styles.message, ...(styles as any)[`&.${requestActionMessage.type}`] }}>
+                    <div style={{ ...styles.message, ...(styles as any)[`&.${requestActionMessage.type}`] }}>
                       {requestActionMessage.text}
                     </div>
                   )}
@@ -419,7 +433,7 @@ const HomePage: React.FC = () => {
                     )}
                   </div>
                 </div>
-              ) : activeTab === 'updates' && (
+              ) : activeTab === 'updates' ? (
                 <div className="updates-tab">
                   <h4>View Daily Updates</h4>
 
@@ -543,6 +557,63 @@ const HomePage: React.FC = () => {
                       )}
                     </div>
                   )}
+                </div>
+              ) : activeTab === 'leaves' && (
+                <div className="leaves-tab">
+                  <h4 style={{paddingBottom: '20px'}}>Add and Edit leaves</h4>
+
+
+                  <div className="date-selector" style={{ marginBottom: '20px' }}>
+                    <label htmlFor="admin-update-date" style={{ marginRight: '10px' }}>Add leave for user: </label>
+                    <select id='users' >
+                      <option>Manthan Mirgal</option>
+                      <option>Atharv Bidwe</option>
+                      <option>Manisha Yadav</option>
+                      <option>Ruchika Mungekar</option>
+                      <option>Shraddha Sonde</option>
+                    </select>
+                    <input
+                      type="date"
+                      id="admin-update-date"
+                      value={adminSelectedDate}
+                      onChange={(e) => setAdminSelectedDate(e.target.value)}
+                      max={formattedToday}
+                      style={{
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid #ddd'
+                      }}
+                    />
+                    <label htmlFor='admin-update-date' style={{ marginRight: '10px'}}> To </label>
+                    <input
+                      type="date"
+                      id="admin-update-date"
+                      value={adminSelectedDate}
+                      onChange={(e) => setAdminSelectedDate(e.target.value)}
+                      max={formattedToday}
+                      style={{
+                        padding: '8px',
+                        borderRadius: '4px',
+                        border: '1px solid #ddd'
+                      }}
+                    />
+                    <div>
+                    <button
+                        style={{
+                          backgroundColor: '#007bff',
+                          color: 'white',
+                          border: 'none',
+                          padding: '10px 20px',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          opacity: isCreatingMail ? 0.7 : 1
+                        }}
+                        >
+                        Add Leave
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
