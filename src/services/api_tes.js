@@ -2,7 +2,7 @@ const Axios = require("axios");
 
 
 let apiClient = Axios.create({
-    baseURL: "http://localhost:3000/api",
+    baseURL: "https://6t2qxf4x45.execute-api.ap-south-1.amazonaws.com/v1/api",
     headers: {
         "Content-Type": "application/json",
     },

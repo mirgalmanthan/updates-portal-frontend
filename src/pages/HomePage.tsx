@@ -88,6 +88,7 @@ const HomePage: React.FC = () => {
   const [userUpdates, setUserUpdates] = useState<UserUpdate[]>([]);
   const [isCreatingMail, setIsCreatingMail] = useState(false);
   const [mailMessage, setMailMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  
 
   // Fetch registration requests when admin tab is active
   useEffect(() => {
@@ -292,7 +293,7 @@ const HomePage: React.FC = () => {
           </div>
         ) : (
           <div className="role-specific-content">
-            <p>You are logged in as a <span className="highlight">User</span></p>
+            <p>You are logged in as a <span className="highlight">{userRole!.charAt(0).toUpperCase() + userRole?.slice(1)}</span></p>
             <p>From here, you can submit and manage your daily updates.</p>
           </div>
         )}

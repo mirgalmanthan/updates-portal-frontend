@@ -5,6 +5,7 @@ import authService, { LoginCredentials, EmailLoginCredentials, RegistrationData 
 interface AuthContextType {
   isAuthenticated: boolean;
   userRole: string | null;
+  // userName: string | null;
   loading: boolean;
   error: string | null;
   adminLogin: (credentials: LoginCredentials) => Promise<boolean>;
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   userRole: null,
   loading: false,
   error: null,
+  // userName: null,
   adminLogin: async () => false,
   userLogin: async () => false,
   registerUser: async () => ({ success: false }),
@@ -40,6 +42,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userRole, setUserRole] = useState<string | null>(authService.getUserRole());
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  // const[userName, setUserName] = useState<string | null>(null);
+
 
   // Check authentication status on mount
   useEffect(() => {
@@ -88,6 +92,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
         setUserRole('user');
         setLoading(false);
+        // const name = response.data.user.email || "User"; // <- adjust this to match your API
+        // setUserName(name);
+
         return true;
       } else {
         setError(response.error || 'Login failed');
@@ -150,6 +157,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     userRole,
     loading,
     error,
+    // userName,
     adminLogin,
     userLogin,
     registerUser,

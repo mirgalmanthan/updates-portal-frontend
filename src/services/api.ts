@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios';
  
 // Base API URL - use proxy in development
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'https://6t2qxf4x45.execute-api.ap-south-1.amazonaws.com/v1/api';
  
 // Create axios instance with default config
 const apiClient: AxiosInstance = axios.create({
